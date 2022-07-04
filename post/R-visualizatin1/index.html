@@ -1,0 +1,368 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>R 语言可视化: 基础散点图 - fxw personal blog</title>
+<link rel="shortcut icon" href="https://fxw97.github.io//favicon.ico">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.2.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css">
+<link rel="stylesheet" href="https://fxw97.github.io//media/css/tailwind.css">
+<link rel="stylesheet" href="https://fxw97.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="R 语言可视化: 基础散点图 - fxw personal blog - Atom Feed" href="https://fxw97.github.io//atom.xml">
+
+    
+
+  <meta name="description" content="R 语言可视化: 基础散点图
+—ggplot2 绘制基础散点图
+内容概要
+散点图常用来描述两个连续型变量间的关系，本期内容将介绍使用 R 语言的绘图包ggplot2绘制基础散点图，并展开介绍如何对散点图进行美化。ggplot2 强大的绘图能..." />
+  <meta property="og:title" content="R 语言可视化: 基础散点图 - fxw personal blog">
+  <meta property="og:description" content="R 语言可视化: 基础散点图
+—ggplot2 绘制基础散点图
+内容概要
+散点图常用来描述两个连续型变量间的关系，本期内容将介绍使用 R 语言的绘图包ggplot2绘制基础散点图，并展开介绍如何对散点图进行美化。ggplot2 强大的绘图能..." />
+  <meta property="og:type" content="articles">
+  <meta property="og:url" content="https://fxw97.github.io/post/R-visualizatin1/" />
+  <meta property="og:image" content="https://fxw97.github.io//post-images/R-visualizatin1.jpg">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:width" content="1200">
+  <meta name="twitter:title" content="R 语言可视化: 基础散点图 - fxw personal blog">
+  <meta name="twitter:description" content="R 语言可视化: 基础散点图
+—ggplot2 绘制基础散点图
+内容概要
+散点图常用来描述两个连续型变量间的关系，本期内容将介绍使用 R 语言的绘图包ggplot2绘制基础散点图，并展开介绍如何对散点图进行美化。ggplot2 强大的绘图能...">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://fxw97.github.io/post/R-visualizatin1/">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+ 
+  
+    <link rel="stylesheet" href="https://fxw97.github.io//media/css/prism-atom-dark.css">
+  
+
+  
+</head>
+
+<body>
+  <div class="antialiased flex flex-col min-h-screen" id="app">
+    <a href="https://fxw97.github.io/" class="fixed top-0 left-0 mt-4 bg-black text-white dark:text-gray-700 dark:bg-yellow-50 dark:hover:bg-black dark:hover:text-white inline-flex p-2 pl-8 hover:text-gray-700 hover:bg-yellow-50 font-bold z-10 transition-fast animated fadeInLeft">
+      fxw personal blog
+    </a>
+    <div class="max-w-4xl w-full mx-auto">
+      <div class="shadow-box bg-white dark:bg-gray-600 rounded-lg pt-32 md:pt-64 px-4 md:px-8 pb-8 animated fadeIn mb-8">
+        <h1 class="text-5xl font-semibold leading-normal pb-8 mb-8 border-b-8 border-gray-700">
+          R 语言可视化: 基础散点图
+        </h1>
+        
+          <img src="https://fxw97.github.io//post-images/R-visualizatin1.jpg" alt="R 语言可视化: 基础散点图" class="block w-full mb-8">
+        
+        <div class="mb-8 flex flex-wrap">
+          <div class="text-gray-400 text-sm mr-4">2022-06-28 · 5 min read</div>
+          
+            <a href="https://fxw97.github.io/tag/EWB9csXC_/" class="text-gray-700 text-sm border-b-2 border-dotted border-gray-200 hover:border-gray-600 transition-all duration-100 inline-flex mr-2">
+              <i class="ri-hashtag"></i>
+              ggplot2
+            </a>
+          
+        </div>
+        <div class="markdown mb-8" v-pre>
+          <h1 id="r-语言可视化-基础散点图">R 语言可视化: 基础散点图</h1>
+<p><strong>—ggplot2 绘制基础散点图</strong></p>
+<h2 id="内容概要">内容概要</h2>
+<p>散点图常用来描述两个连续型变量间的关系，本期内容将介绍使用 R 语言的绘图包<strong>ggplot2</strong>绘制基础散点图，并展开介绍如何对散点图进行美化。ggplot2 强大的绘图能力，是促使我学习 R 语言的原因!!!使用的示例数据集是 penguins，数据包含了不同种类企鹅的嘴长度和嘴厚度，我们拟对不同种类企鹅的嘴、和嘴厚进行绘制散点图，来探究企鹅嘴长与嘴厚度之间是否有联系。需要本案例数据和完整代码的于公众号后台回复<strong>20220614-2</strong>即可。</p>
+<hr>
+<h2 id="作图数据">作图数据</h2>
+<p>导入 tidyverse 和 ggplot2 包，读取原始数据。没有 tidyverse 包的，需要在 Rstudio 中使用命令 install.packages('tidyverse')安装。<strong>若读取数据时显示调用失败，则需要先在电脑中安装 Rtool(最近我遇到的一个坑)，再重新安装 tidyverse 包即可。</strong></p>
+<pre><code class="language-R">library(tidyverse)
+library(ggplot2)
+df &lt;- read.csv('scatterplot/penguins.csv')
+df
+</code></pre>
+<p>Rstudio 中输出原始数据组成如下:<br>
+<img src="https://fxw97.github.io//post-images/1656372721946.jpg" alt="" loading="lazy"></p>
+<p>剔除缺失值，获取作图数据集 df，并设置作图字体为 Calibri：</p>
+<pre><code class="language-R">df &lt;- drop_na(df)
+windowsFonts(Calibri=windowsFont('Calibri'))
+</code></pre>
+<h2 id="作图代码">作图代码</h2>
+<p>使用 ggplot2，进行绘制散点图，ggplot()函数中绘图数据集为 df，映射 aes()中 x 轴为企鹅嘴长数据，y 轴为企鹅嘴宽数据，按照不同种类来区分颜色；几何形状使用 geom_point()设置为点，用于绘制散点图，散点大小设置为 3。有了绘图数据、映射和几何形状，即可完成绘制一幅基础图形，将图形保存为 p1。</p>
+<pre><code class="language-R"># 企鹅嘴长和嘴厚的关系散点图
+p1 &lt;- ggplot(df,mapping = aes(x=bill_length_mm,
+                              y = bill_depth_mm,
+                              color=species))+
+  geom_point(size=3)
+p1
+</code></pre>
+<p>p1 绘图结果:<br>
+<img src="https://fxw97.github.io//post-images/1656372731543.jpg" alt="" loading="lazy"></p>
+<p>后续可对 p1 进一步美化修饰，完成自己心目中的理想绘图目标(否管结果如何，先从过程中逐步学习和积累知识)。ggplot2 的默认绘图图表，我个人认为偏商业特色，这里修改 p1 默认主题为 theme_bw(),使其更贴近于学术图表，并对网格线进行了自定义设置，最后将修改后的图保存到 p2:</p>
+<pre><code class="language-R">p2 &lt;- p1+
+  theme_bw()+
+  theme(panel.grid=element_line(linetype='dashed',colour = 'grey80'), #设置网格线为虚线,修改颜色
+        panel.grid.minor = element_blank()) # 取消次刻度网格线
+p2
+</code></pre>
+<p>p2 绘图结果:<br>
+<img src="https://fxw97.github.io//post-images/1656372739483.jpg" alt="" loading="lazy"></p>
+<p>接下来，使用绘图时常用的一些自定义美化过程对 p2 进行修改，并保存到 p3，包括以下部分:</p>
+<ol>
+<li>自定义 x 轴和 y 轴名称</li>
+<li>修改轴名字体粗细或斜体、字体颜色和字体大小</li>
+<li>修改轴刻度字体类型和大小</li>
+<li>修改轴线宽度</li>
+<li>修改图例标题字体大小</li>
+<li>修改图例中字体大小</li>
+<li>修改图例位置</li>
+<li>修改图例背景，使其透明化</li>
+</ol>
+<pre><code class="language-R">p3 &lt;- p2+
+  xlab('企鹅嘴长(mm)')+  #第1部分
+  ylab('企鹅嘴厚(mm)')+
+  theme(axis.title=element_text(face='bold',colour = 'purple',size=15),#第2部分
+        axis.text=element_text(family='Calibri',size=13), #第3部分
+        panel.border = element_rect(size=1), #第4部分
+        legend.title = element_text(size=13,face='bold'),#第5部分
+        legend.text=element_text(size=12), #第6部分
+        legend.position = c(0.90,0.85),#第7部分
+        legend.background = element_blank(),legend.key=element_blank())#第8部分
+p3
+</code></pre>
+<p>P3 绘图结果：<br>
+<img src="https://fxw97.github.io//post-images/1656372747421.jpg" alt="" loading="lazy"></p>
+<p>观察 p3 发现绘图区域比较拥挤，我们可以加大 x 轴和 y 轴的刻度范围，使图形更加紧促，修改后保存到 p4 中。xlim()和 scale_x_continuous()均可修改 x 轴范围，但后者可使用 breaks 和 labels 等参数自定义刻度线标签内容，十分方便，所以推荐学会使用后者。对于 ylim()和 scale_x_continuous()同理而言。</p>
+<pre><code class="language-R"># 设置x和y轴范围和刻度
+p4 &lt;- p3+scale_x_continuous(limits=c(25,65),breaks=seq(25,65,5))+ylim(10,25)
+p4
+</code></pre>
+<p>p4 绘图结果:<br>
+<img src="https://fxw97.github.io//post-images/1656372757438.jpg" alt="" loading="lazy"></p>
+<p>最后使用ggsave()将绘制的p1,p2,p3和p4保存到本地：</p>
+<pre><code class="language-R">#宽度高度单位默认为in，英尺
+ggsave('scatterplot/scatterp4.jpg',plot=p4,width=8.0,height=5.24,dpi=900)
+ggsave('scatterplot/scatterp3.jpg',plot=p3,width=8.0,height=5.24,dpi=900)
+ggsave('scatterplot/scatterp2.jpg',plot=p2,width=8.0,height=5.24,dpi=900)
+ggsave('scatterplot/scatterp1.jpg',plot=p1,width=8.0,height=5.24,dpi=900)
+</code></pre>
+<p>从p1到p4，我们逐步对散点图进行了自定义美化，这里将绘图结果汇总展示，便于显现我们的对图形进行了哪些具体修改，之后读者有相应需求时去找对应步骤的代码即可:<br>
+<img src="https://fxw97.github.io//post-images/1656372768245.jpg" alt="" loading="lazy"><br>
+<img src="https://fxw97.github.io//post-images/1656372773769.jpg" alt="" loading="lazy"><br>
+<img src="https://fxw97.github.io//post-images/1656372778837.jpg" alt="" loading="lazy"><br>
+<img src="https://fxw97.github.io//post-images/1656372783558.jpg" alt="" loading="lazy"></p>
+<p>以上便是使用 ggplot2 绘制基础散点图的相关内容，可结合同期推文—Python 可视化：基础散点图，来同时对比学习使用 matplotlib 绘制散点图。</p>
+
+        </div>
+        <!-- Share to Twitter, Weibo, Telegram -->
+        <div class="flex items-center">
+          <div class="mr-4 flex items-center">
+            <i class="ri-share-forward-line text-gray-500"></i>
+          </div>
+          <div class="px-4 cursor-pointer text-blue-500 hover:bg-blue-100 dark:hover:bg-gray-600 inline-flex" @click="shareToTwitter">
+            <i class="ri-twitter-line"></i>
+          </div>
+          <div class="px-4 cursor-pointer text-red-500 hover:bg-red-100 dark:hover:bg-gray-600 inline-flex" @click="shareToWeibo">
+            <i class="ri-weibo-line"></i>
+          </div>
+          <div class="px-4 cursor-pointer text-indigo-500 hover:bg-indigo-100 dark:hover:bg-gray-600 inline-flex" @click="shareToTelegram">
+            <i class="ri-telegram-line"></i>
+          </div>
+        </div>
+      </div>
+
+      
+
+      
+
+      <footer class="py-12 text-center px-4 md:px-0" v-pre>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+</footer>
+    </div>
+
+    <!-- TOC Container -->
+    <div class="fixed right-0 bottom-0 mb-16 mr-4 shadow w-8 h-8 rounded-full flex justify-center items-center z-10 cursor-pointer bg-white dark:bg-gray-500 dark:text-gray-200 hover:shadow-lg transition-all animated fadeInRight" @click="showToc = true">
+      <i class="ri-file-list-line"></i>
+    </div>
+
+    <div class="fixed right-0 top-0 bottom-0 overflow-y-auto w-64 bg-white dark:bg-gray-800 p-4 border-l border-gray-100 dark:border-gray-600 z-10 transition-fast" :class="{ '-mr-64': !showToc }">
+      <div class="flex mb-4 justify-end">
+        <div class="w-8 h-8 inline-flex justify-center items-center rounded-full cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-fast" @click="showToc = false">
+          <i class="ri-close-line text-lg"></i>
+        </div>
+      </div>
+      <div class="post-toc-container">
+        <ul class="markdownIt-TOC">
+<li><a href="#r-%E8%AF%AD%E8%A8%80%E5%8F%AF%E8%A7%86%E5%8C%96-%E5%9F%BA%E7%A1%80%E6%95%A3%E7%82%B9%E5%9B%BE">R 语言可视化: 基础散点图</a>
+<ul>
+<li><a href="#%E5%86%85%E5%AE%B9%E6%A6%82%E8%A6%81">内容概要</a></li>
+<li><a href="#%E4%BD%9C%E5%9B%BE%E6%95%B0%E6%8D%AE">作图数据</a></li>
+<li><a href="#%E4%BD%9C%E5%9B%BE%E4%BB%A3%E7%A0%81">作图代码</a></li>
+</ul>
+</li>
+</ul>
+
+      </div>
+    </div>
+
+    <!-- Back to top -->
+    <div class="fixed right-0 bottom-0 mb-4 mr-4 shadow w-8 h-8 rounded-full flex justify-center items-center z-10 cursor-pointer bg-white hover:shadow-lg transition-all dark:bg-gray-500 dark:text-gray-200" @click="backToUp" v-show="scrolled">
+      <i class="ri-arrow-up-line"></i>
+    </div>
+  </div>
+
+  <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+  <!-- Background of PhotoSwipe. 
+        It's a separate element as animating opacity is faster than rgba(). -->
+  <div class="pswp__bg">
+  </div>
+  <!-- Slides wrapper with overflow:hidden. -->
+  <div class="pswp__scroll-wrap">
+    <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+    <div class="pswp__container">
+      <div class="pswp__item">
+      </div>
+      <div class="pswp__item">
+      </div>
+      <div class="pswp__item">
+      </div>
+    </div>
+    <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+    <div class="pswp__ui pswp__ui--hidden">
+      <div class="pswp__top-bar">
+        <!--  Controls are self-explanatory. Order can be changed. -->
+        <div class="pswp__counter">
+        </div>
+        <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+        <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+        <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+        <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+        <!-- element will get class pswp__preloader--active when preloader is running -->
+        <div class="pswp__preloader">
+          <div class="pswp__preloader__icn">
+            <div class="pswp__preloader__cut">
+              <div class="pswp__preloader__donut">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+        <div class="pswp__share-tooltip">
+        </div>
+      </div>
+      <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+      </button>
+      <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+      </button>
+      <div class="pswp__caption">
+        <div class="pswp__caption__center">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://fxw97.github.io//media/scripts/main.js"></script>
+  
+  <!-- Code Highlight -->
+  
+    <script src="https://fxw97.github.io//media/prism.js"></script>
+    <script>
+      Prism.highlightAll()
+    </script>
+  
+
+  <script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+  <script>
+    //拿到预览框架，也就是上面的html代码
+    var pswpElement = document.querySelectorAll('.pswp')[0];
+    //定义图片数组变量
+    var imgitems;
+    /**
+    * 用于显示预览界面
+    * @param index 图片数组下标
+    */
+    function viewImg(index) {
+      //其它选项这里不做过多阐述，详情见官网
+      var pswpoptions = {
+        index: parseInt(index, 10), // 开始幻灯片索引。0是第一张幻灯片。必须是整数，而不是字符串。
+        bgOpacity: 0.7, // 背景透明度，0-1
+        maxSpreadZoom: 3, // 缩放级别，不要太大
+      };
+      //初始化并打开PhotoSwipe，pswpElement对应上面预览框架，PhotoSwipeUI_Default为皮肤，imgitems为图片数组，pswpoptions为选项
+      var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, imgitems, pswpoptions);
+      gallery.init()
+    }
+    /**
+    * 用于添加图片点击事件
+    * @param img 图片元素
+    * @param index 所属下标（在imgitems中的位置）
+    */
+    function addImgClick(img, index) {
+      img.onclick = function() {
+        viewImg(index)
+      }
+    }
+    /**
+    * 轮询所有图片，获取src、width、height等数据，加入imgitems，并给图片元素添加事件
+    * 最好在onload中执行该方法，本站因放在最底部，所以直接初始化
+    * 异步加载图片可在图片元素创建完成后调用此方法
+    */
+    function initImg() {
+      //重置图片数组
+      imgitems = [];
+      //查找class:markdown 下的所有img元素并遍历
+      var imgs = document.querySelectorAll('.markdown img');
+      for (var i = 0; i < imgs.length; i++) {
+        var img = imgs[i];
+        //本站相册初始为loading图片，真实图片放在data-src
+        var ds = img.getAttribute("data-src");
+        //创建image对象，用于获取图片宽高
+        var imgtemp = new Image();
+        //判断是否存在data-src
+        if (ds != null && ds.length > 0) {
+          imgtemp.src = ds
+        } else {
+          imgtemp.src = img.src
+        }
+        //判断是否存在缓存
+        if (imgtemp.complete) {
+          var imgobj = {
+            "src": imgtemp.src,
+            "w": imgtemp.width,
+            "h": imgtemp.height,
+          };
+          imgitems[i] = imgobj;
+          addImgClick(img, i);
+        } else {
+          console.log('进来了2')
+          imgtemp.index = i;
+          imgtemp.img = img;
+          imgtemp.onload = function() {
+            var imgobj = {
+              "src": this.src,
+              "w": this.width,
+              "h": this.height,
+            };
+            //不要使用push，因为onload前后顺序会不同
+            imgitems[this.index] = imgobj
+            //添加点击事件
+            addImgClick(this.img, this.index);
+          }
+        }
+      }
+    }
+    //初始化
+    initImg();
+  </script>
+  
+  
+</body>
+
+</html>

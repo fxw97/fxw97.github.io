@@ -1,0 +1,363 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>全国第七次人口普查数据可视化—基于geopandas - fxw personal blog</title>
+<link rel="shortcut icon" href="https://fxw97.github.io//favicon.ico">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.2.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css">
+<link rel="stylesheet" href="https://fxw97.github.io//media/css/tailwind.css">
+<link rel="stylesheet" href="https://fxw97.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="全国第七次人口普查数据可视化—基于geopandas - fxw personal blog - Atom Feed" href="https://fxw97.github.io//atom.xml">
+
+    
+
+  <meta name="description" content="全国第七次人口普查数据可视化—基于geopandas
+—geopandas地图插值
+内容概要
+第七次全国人口普查，是中国在2020年开展的全国人口普查。普查标准时点是2020年11月1日零时，彻查人口出生变动情况以及房屋情况。2021年5月..." />
+  <meta property="og:title" content="全国第七次人口普查数据可视化—基于geopandas - fxw personal blog">
+  <meta property="og:description" content="全国第七次人口普查数据可视化—基于geopandas
+—geopandas地图插值
+内容概要
+第七次全国人口普查，是中国在2020年开展的全国人口普查。普查标准时点是2020年11月1日零时，彻查人口出生变动情况以及房屋情况。2021年5月..." />
+  <meta property="og:type" content="articles">
+  <meta property="og:url" content="https://fxw97.github.io/post/geopandas-2/" />
+  <meta property="og:image" content="https://fxw97.github.io//post-images/geopandas-2.jpg">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:width" content="1200">
+  <meta name="twitter:title" content="全国第七次人口普查数据可视化—基于geopandas - fxw personal blog">
+  <meta name="twitter:description" content="全国第七次人口普查数据可视化—基于geopandas
+—geopandas地图插值
+内容概要
+第七次全国人口普查，是中国在2020年开展的全国人口普查。普查标准时点是2020年11月1日零时，彻查人口出生变动情况以及房屋情况。2021年5月...">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://fxw97.github.io/post/geopandas-2/">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+ 
+  
+    <link rel="stylesheet" href="https://fxw97.github.io//media/css/prism-atom-dark.css">
+  
+
+  
+</head>
+
+<body>
+  <div class="antialiased flex flex-col min-h-screen" id="app">
+    <a href="https://fxw97.github.io/" class="fixed top-0 left-0 mt-4 bg-black text-white dark:text-gray-700 dark:bg-yellow-50 dark:hover:bg-black dark:hover:text-white inline-flex p-2 pl-8 hover:text-gray-700 hover:bg-yellow-50 font-bold z-10 transition-fast animated fadeInLeft">
+      fxw personal blog
+    </a>
+    <div class="max-w-4xl w-full mx-auto">
+      <div class="shadow-box bg-white dark:bg-gray-600 rounded-lg pt-32 md:pt-64 px-4 md:px-8 pb-8 animated fadeIn mb-8">
+        <h1 class="text-5xl font-semibold leading-normal pb-8 mb-8 border-b-8 border-gray-700">
+          全国第七次人口普查数据可视化—基于geopandas
+        </h1>
+        
+          <img src="https://fxw97.github.io//post-images/geopandas-2.jpg" alt="全国第七次人口普查数据可视化—基于geopandas" class="block w-full mb-8">
+        
+        <div class="mb-8 flex flex-wrap">
+          <div class="text-gray-400 text-sm mr-4">2022-07-04 · 4 min read</div>
+          
+            <a href="https://fxw97.github.io/tag/CZFPoGquY/" class="text-gray-700 text-sm border-b-2 border-dotted border-gray-200 hover:border-gray-600 transition-all duration-100 inline-flex mr-2">
+              <i class="ri-hashtag"></i>
+              geopandas
+            </a>
+          
+        </div>
+        <div class="markdown mb-8" v-pre>
+          <h1 id="全国第七次人口普查数据可视化基于geopandas">全国第七次人口普查数据可视化—基于geopandas</h1>
+<p><strong>—geopandas地图插值</strong></p>
+<h2 id="内容概要">内容概要</h2>
+<p>第七次全国人口普查，是中国在2020年开展的全国人口普查。普查标准时点是2020年11月1日零时，彻查人口出生变动情况以及房屋情况。2021年5月11日，第七次全国人口普查结果公布，全国人口(不含港，澳，台)共1411778724人。本案例将介绍如何使用<em>geopandas</em>可视化全国各省级单位(不含港澳台)的最新人口数据。需要本案例数据和完整代码的于公众号后台回复<em>20220704</em>即可。</p>
+<hr>
+<h2 id="数据处理">数据处理</h2>
+<p>人口数据来源为红黑人口库网站https://www.hongheiku.com/公布的全国第七次人口普查中各省份的人口数据。<br>
+导入使用的库，读取各省份人口数据。</p>
+<pre><code class="language-Python">import geopandas as gpd
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+# 修改绘图字体 
+plt.rcParams['font.sans-serif'] = 'Microsoft YaHei' 
+# 使打印输出显示更全
+pd.set_option('display.max_columns',500)
+pd.set_option('display.width',1000)
+
+pop_data = pd.read_excel('第七次人口普查数据.xlsx')
+print(pop_data)
+</code></pre>
+<p>输出：<br>
+<img src="https://fxw97.github.io//post-images/1656923225137.png" alt="" loading="lazy"></p>
+<p>读取用于绘制中国地图的地理信息数据。</p>
+<pre><code class="language-Python">df = gpd.read_file('中华人民共和国.json')
+print(df)
+</code></pre>
+<p>输出：<br>
+<img src="https://fxw97.github.io//post-images/1656923241714.png" alt="" loading="lazy"></p>
+<p>从数据输出可以看出，人口数据中各省份命名方式为简写，而地理信息数据中命名方式为全称。为了将各省份人口数据映射到对应地理信息数据中，我们需要将省份名称统一，然后将人口和地理信息数据进行合并，并转换为geopandas能识别的GeoDataFrame格式。</p>
+<pre><code class="language-Python"># 将地理信息数据中的省份名称与人口数据中的省份名称改为一致
+df['name'] = ['北京','天津','河北','山西','内蒙古','辽宁','吉林','黑龙江',
+              '上海','江苏','浙江','安徽','福建','江西','山东','河南',
+              '湖北','湖南','广东','广西','海南','重庆','四川','贵州',
+              '云南','西藏','陕西','甘肃','青海','宁夏','新疆','台湾','香港','澳门',np.nan]
+data_with_geometry = pd.merge(left=df,right=pop_data,left_on='name',right_on='地区',how='left')
+data_with_geometry = gpd.GeoDataFrame(data_with_geometry, crs='EPSG:4326')
+print(data_with_geometry)
+</code></pre>
+<p>输出：<br>
+<img src="https://fxw97.github.io//post-images/1656923250271.png" alt="" loading="lazy"><br>
+从输出可以看出，每个省份的地理信息数据已经与人口数据相关联。接下来便可使用geopandas对地理信息数据进行可视化，并使用人口数据作为映射。</p>
+<hr>
+<h2 id="可视化">可视化</h2>
+<p>使用geopandas对处理好的GeoDataFrame数据进行可视化。</p>
+<pre><code class="language-Python">fig,ax = plt.subplots(figsize=(8,8))
+# 绘图
+data_with_geometry.plot(ax=ax,column='人口数',
+                        cmap='YlGnBu',
+                        missing_kwds={&quot;color&quot;: &quot;grey&quot;,
+                                      &quot;edgecolor&quot;: &quot;black&quot;,
+                                      'label':'缺失值'},
+                        legend=True,
+                        scheme='natural_breaks',
+                        k=6,
+                        legend_kwds={
+                            'loc': 'lower left',
+                            'title': '人口数量分级',
+                            'shadow': True,
+                            'interval': True,
+                            'fmt':'{:.2e}',
+                            'bbox_to_anchor':(0.1,0.1),
+                            'fontsize': 8})
+# 设置轴刻度为经纬度
+ax.set_xticks(range(80,140,10),[str(x)+'°E' for x in range(80,140,10)])
+ax.set_yticks(range(10,60,10),[str(x)+'°N' for x in range(10,60,10)])
+# 添加经纬度网格线
+ax.grid(ls='--',alpha=0.5)
+# 添加图名
+plt.title('中国第七次人口普查数据分布(2021年)',fontsize=18)
+plt.tight_layout()
+plt.savefig('1.第七次人口普查.jpg',dpi=600)
+plt.show()
+</code></pre>
+<p>输出并保存的地图：<br>
+<img src="https://fxw97.github.io//post-images/1656923258850.jpg" alt="" loading="lazy"><br>
+以上便是使用geopandas对全国第七次人口普查数据可视化的完整过程及相应代码。整个地图绘制过程十分简单，不由得再次被geopandas的强大所惊艳到。</p>
+
+        </div>
+        <!-- Share to Twitter, Weibo, Telegram -->
+        <div class="flex items-center">
+          <div class="mr-4 flex items-center">
+            <i class="ri-share-forward-line text-gray-500"></i>
+          </div>
+          <div class="px-4 cursor-pointer text-blue-500 hover:bg-blue-100 dark:hover:bg-gray-600 inline-flex" @click="shareToTwitter">
+            <i class="ri-twitter-line"></i>
+          </div>
+          <div class="px-4 cursor-pointer text-red-500 hover:bg-red-100 dark:hover:bg-gray-600 inline-flex" @click="shareToWeibo">
+            <i class="ri-weibo-line"></i>
+          </div>
+          <div class="px-4 cursor-pointer text-indigo-500 hover:bg-indigo-100 dark:hover:bg-gray-600 inline-flex" @click="shareToTelegram">
+            <i class="ri-telegram-line"></i>
+          </div>
+        </div>
+      </div>
+
+      
+
+      
+
+      <footer class="py-12 text-center px-4 md:px-0" v-pre>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+</footer>
+    </div>
+
+    <!-- TOC Container -->
+    <div class="fixed right-0 bottom-0 mb-16 mr-4 shadow w-8 h-8 rounded-full flex justify-center items-center z-10 cursor-pointer bg-white dark:bg-gray-500 dark:text-gray-200 hover:shadow-lg transition-all animated fadeInRight" @click="showToc = true">
+      <i class="ri-file-list-line"></i>
+    </div>
+
+    <div class="fixed right-0 top-0 bottom-0 overflow-y-auto w-64 bg-white dark:bg-gray-800 p-4 border-l border-gray-100 dark:border-gray-600 z-10 transition-fast" :class="{ '-mr-64': !showToc }">
+      <div class="flex mb-4 justify-end">
+        <div class="w-8 h-8 inline-flex justify-center items-center rounded-full cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-fast" @click="showToc = false">
+          <i class="ri-close-line text-lg"></i>
+        </div>
+      </div>
+      <div class="post-toc-container">
+        <ul class="markdownIt-TOC">
+<li><a href="#%E5%85%A8%E5%9B%BD%E7%AC%AC%E4%B8%83%E6%AC%A1%E4%BA%BA%E5%8F%A3%E6%99%AE%E6%9F%A5%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96%E5%9F%BA%E4%BA%8Egeopandas">全国第七次人口普查数据可视化—基于geopandas</a>
+<ul>
+<li><a href="#%E5%86%85%E5%AE%B9%E6%A6%82%E8%A6%81">内容概要</a></li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86">数据处理</a></li>
+<li><a href="#%E5%8F%AF%E8%A7%86%E5%8C%96">可视化</a></li>
+</ul>
+</li>
+</ul>
+
+      </div>
+    </div>
+
+    <!-- Back to top -->
+    <div class="fixed right-0 bottom-0 mb-4 mr-4 shadow w-8 h-8 rounded-full flex justify-center items-center z-10 cursor-pointer bg-white hover:shadow-lg transition-all dark:bg-gray-500 dark:text-gray-200" @click="backToUp" v-show="scrolled">
+      <i class="ri-arrow-up-line"></i>
+    </div>
+  </div>
+
+  <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+  <!-- Background of PhotoSwipe. 
+        It's a separate element as animating opacity is faster than rgba(). -->
+  <div class="pswp__bg">
+  </div>
+  <!-- Slides wrapper with overflow:hidden. -->
+  <div class="pswp__scroll-wrap">
+    <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+    <div class="pswp__container">
+      <div class="pswp__item">
+      </div>
+      <div class="pswp__item">
+      </div>
+      <div class="pswp__item">
+      </div>
+    </div>
+    <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+    <div class="pswp__ui pswp__ui--hidden">
+      <div class="pswp__top-bar">
+        <!--  Controls are self-explanatory. Order can be changed. -->
+        <div class="pswp__counter">
+        </div>
+        <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+        <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+        <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+        <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+        <!-- element will get class pswp__preloader--active when preloader is running -->
+        <div class="pswp__preloader">
+          <div class="pswp__preloader__icn">
+            <div class="pswp__preloader__cut">
+              <div class="pswp__preloader__donut">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+        <div class="pswp__share-tooltip">
+        </div>
+      </div>
+      <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+      </button>
+      <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+      </button>
+      <div class="pswp__caption">
+        <div class="pswp__caption__center">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://fxw97.github.io//media/scripts/main.js"></script>
+  
+  <!-- Code Highlight -->
+  
+    <script src="https://fxw97.github.io//media/prism.js"></script>
+    <script>
+      Prism.highlightAll()
+    </script>
+  
+
+  <script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+  <script>
+    //拿到预览框架，也就是上面的html代码
+    var pswpElement = document.querySelectorAll('.pswp')[0];
+    //定义图片数组变量
+    var imgitems;
+    /**
+    * 用于显示预览界面
+    * @param index 图片数组下标
+    */
+    function viewImg(index) {
+      //其它选项这里不做过多阐述，详情见官网
+      var pswpoptions = {
+        index: parseInt(index, 10), // 开始幻灯片索引。0是第一张幻灯片。必须是整数，而不是字符串。
+        bgOpacity: 0.7, // 背景透明度，0-1
+        maxSpreadZoom: 3, // 缩放级别，不要太大
+      };
+      //初始化并打开PhotoSwipe，pswpElement对应上面预览框架，PhotoSwipeUI_Default为皮肤，imgitems为图片数组，pswpoptions为选项
+      var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, imgitems, pswpoptions);
+      gallery.init()
+    }
+    /**
+    * 用于添加图片点击事件
+    * @param img 图片元素
+    * @param index 所属下标（在imgitems中的位置）
+    */
+    function addImgClick(img, index) {
+      img.onclick = function() {
+        viewImg(index)
+      }
+    }
+    /**
+    * 轮询所有图片，获取src、width、height等数据，加入imgitems，并给图片元素添加事件
+    * 最好在onload中执行该方法，本站因放在最底部，所以直接初始化
+    * 异步加载图片可在图片元素创建完成后调用此方法
+    */
+    function initImg() {
+      //重置图片数组
+      imgitems = [];
+      //查找class:markdown 下的所有img元素并遍历
+      var imgs = document.querySelectorAll('.markdown img');
+      for (var i = 0; i < imgs.length; i++) {
+        var img = imgs[i];
+        //本站相册初始为loading图片，真实图片放在data-src
+        var ds = img.getAttribute("data-src");
+        //创建image对象，用于获取图片宽高
+        var imgtemp = new Image();
+        //判断是否存在data-src
+        if (ds != null && ds.length > 0) {
+          imgtemp.src = ds
+        } else {
+          imgtemp.src = img.src
+        }
+        //判断是否存在缓存
+        if (imgtemp.complete) {
+          var imgobj = {
+            "src": imgtemp.src,
+            "w": imgtemp.width,
+            "h": imgtemp.height,
+          };
+          imgitems[i] = imgobj;
+          addImgClick(img, i);
+        } else {
+          console.log('进来了2')
+          imgtemp.index = i;
+          imgtemp.img = img;
+          imgtemp.onload = function() {
+            var imgobj = {
+              "src": this.src,
+              "w": this.width,
+              "h": this.height,
+            };
+            //不要使用push，因为onload前后顺序会不同
+            imgitems[this.index] = imgobj
+            //添加点击事件
+            addImgClick(this.img, this.index);
+          }
+        }
+      }
+    }
+    //初始化
+    initImg();
+  </script>
+  
+  
+</body>
+
+</html>
